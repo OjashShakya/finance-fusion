@@ -5,7 +5,7 @@ const {
   hashPassword,
   comparePassword,
   generateToken,
-} = require("../utils/authUtils");
+} = require("../utils/authutils");
 const { generateOTP, sendVerificationEmail,sendLoginEmail } = require("../utils/OTPUtils");
 
 const path = require("path");

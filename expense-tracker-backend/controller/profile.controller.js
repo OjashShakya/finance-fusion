@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const User = require("../models/user.model");
 const { StatusCodes } = require("http-status-codes");
-const { hashPassword, comparePassword } = require("../utils/authUtils");
+const { hashPassword, comparePassword } = require("../utils/authutils");
 const cloudinary = require("../config/cloudinary");
 const { generateOTP, sendVerificationEmail } = require("../utils/OTPUtils");
 
