@@ -61,7 +61,7 @@ export function FinanceHeader({ activeView, isSidebarCollapsed, setIsSidebarColl
           <ModeToggle />
         </div>
         <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10 border border-[#e2e8f0] dark:border-[#4e4e4e]">
+          <Avatar className="h-10 w-10 border border-[#e2e8f0] dark:border-[#4e4e4e]"  onClick={() => setActiveView('settings')}>
             <AvatarImage src={user?.profilePicture?.url || "/assets/profile-placeholder.png"} alt={user?.fullname || "User"} />
             <AvatarFallback className="bg-primary text-primary-foreground">
               {user?.fullname?.split(" ").map((n) => n[0]).join("") || "U"}

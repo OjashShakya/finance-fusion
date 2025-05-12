@@ -52,6 +52,10 @@ export function SavingsGoals({ goals, onAdd, onUpdate, onDelete }: SavingsGoalsP
   const [goalToDelete, setGoalToDelete] = useState<string | null>(null)
 
   function handleSubmit(data: Omit<SavingsGoal, "id">) {
+    const availableIncome = Cookies.get('availableIncome')
+    const availableIncomeNum = Number(availableIncome || "0")
+    const target = Number(data.target_amount);
+    const initial = Number(data.initial_amount);
     // Validate name
     if (!data.name.trim()) {
       toast({
@@ -73,7 +77,8 @@ export function SavingsGoals({ goals, onAdd, onUpdate, onDelete }: SavingsGoalsP
     }
 
     // Validate numbers
-    if (isNaN(data.target_amount) || data.target_amount <= 0) {
+   
+    if (isNaN(target) || target <= 0) {
       toast({
         title: "Error",
         description: "Target amount must be greater than 0",
@@ -81,7 +86,7 @@ export function SavingsGoals({ goals, onAdd, onUpdate, onDelete }: SavingsGoalsP
       });
       return;
     }
-    if (isNaN(data.initial_amount) || data.initial_amount < 0) {
+    if (isNaN(initial) || initial < 0) {
       toast({
         title: "Error",
         description: "Initial amount cannot be negative",
@@ -89,9 +94,15 @@ export function SavingsGoals({ goals, onAdd, onUpdate, onDelete }: SavingsGoalsP
       });
       return;
     }
-
-    // Validate initial amount is less than target amount
-    if (data.initial_amount >= data.target_amount) {
+      if (initial > availableIncomeNum) {
+      toast({
+        title: "Add Your Income",
+        description: "Initial amount cannot be greater than the income available",
+        variant: "destructive",
+      });
+      return;
+    } 
+    if (initial > target) {
       toast({
         title: "Error",
         description: "Initial amount must be less than target amount",
@@ -99,6 +110,7 @@ export function SavingsGoals({ goals, onAdd, onUpdate, onDelete }: SavingsGoalsP
       });
       return;
     }
+    // Validate initial amount is less than target amount
 
     // Validate date is in the future
     if (data.date <= new Date()) {
