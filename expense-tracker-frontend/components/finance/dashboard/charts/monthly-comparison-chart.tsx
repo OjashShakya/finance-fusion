@@ -40,12 +40,12 @@ export function MonthlyComparisonChart({ data }: MonthlyComparisonChartProps) {
               fontSize={12}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value) => `$${value}`}
+              tickFormatter={(value) => `Rs. ${value}`}
             />
             <Tooltip
               formatter={(value: any) => {
                 if (typeof value === 'number') {
-                  return [`$${value.toFixed(2)}`, ""];
+                  return [`Rs. ${value.toFixed(2)}`, ""];
                 }
                 return [value, ""];
               }}

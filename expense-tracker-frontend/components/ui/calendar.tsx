@@ -2,7 +2,8 @@
 
 import * as React from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { DayPicker } from "react-day-picker"
+import { DayPicker, DropdownProps } from "react-day-picker"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
@@ -15,14 +16,41 @@ function Calendar({
   showOutsideDays = true,
   ...props
 }: CalendarProps) {
+  const [month, setMonth] = React.useState<Date>(new Date())
+
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ]
+
+  const years = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - 5 + i)
+
+  const handleMonthChange = (newMonth: Date) => {
+    setMonth(newMonth)
+  }
+
+  const handleYearChange = (year: number) => {
+    const newDate = new Date(month)
+    newDate.setFullYear(year)
+    setMonth(newDate)
+  }
+
+  const handleMonthSelect = (monthIndex: number) => {
+    const newDate = new Date(month)
+    newDate.setMonth(monthIndex)
+    setMonth(newDate)
+  }
+
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
+      month={month}
+      onMonthChange={handleMonthChange}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
-        caption: "flex justify-center pt-1 relative items-center",
+        caption: "flex justify-center pt-1 relative items-center gap-2",
         caption_label: "text-sm font-medium",
         nav: "space-x-1 flex items-center",
         nav_button: cn(
@@ -56,6 +84,37 @@ function Calendar({
       components={{
         IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
+        Dropdown: ({ value, onChange, children, ...props }: DropdownProps) => {
+          const options = React.Children.toArray(children) as React.ReactElement[]
+          const selected = options.find((child) => child.props.value === value)
+          const handleValueChange = (value: string) => {
+            const changeEvent = { target: { value } }
+            onChange?.(changeEvent as any)
+          }
+
+          return (
+            <Select
+              value={value?.toString()}
+              onValueChange={(value) => {
+                handleValueChange(value)
+              }}
+            >
+              <SelectTrigger className="w-[120px] h-7">
+                <SelectValue>{selected?.props?.children}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {options.map((option, id: number) => (
+                  <SelectItem
+                    key={id}
+                    value={option.props.value?.toString() ?? ""}
+                  >
+                    {option.props.children}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )
+        },
       }}
       {...props}
     />

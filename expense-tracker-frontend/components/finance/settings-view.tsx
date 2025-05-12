@@ -11,6 +11,17 @@ import { profileAPI } from "@/lib/api";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
 
+interface Expense {
+  amount: number;
+  category: string;
+  date: string;
+}
+
+interface Budget {
+  amount: number;
+  category: string;
+}
+
 export default function SettingsView() {
   const { user, logout, sendPasswordResetEmail, setUser } = useAuth();
   const [showLogout, setShowLogout] = useState(false);
@@ -33,35 +44,87 @@ export default function SettingsView() {
       setLoading(true);
       try {
         const savingsGoals = await savingsApi.getAllSavings();
-        const expenses = [{ amount: 100 }, { amount: 200 }]; // Replace with real fetch
-        const budgets = [{ amount: 1000 }]; // Replace with real fetch
+        const expenses: Expense[] = [{ amount: 100, category: 'Food', date: new Date().toISOString() }, { amount: 200, category: 'Transport', date: new Date().toISOString() }]; // Replace with real fetch
+        const budgets: Budget[] = [{ amount: 1000, category: 'Food' }]; // Replace with real fetch
         const achs = [];
         if (user) achs.push({ title: "Welcome! First Login", value: 1, max: 1 });
         if (expenses.length > 0) achs.push({ title: "Logged your first expense", value: 1, max: 1 });
         if (budgets.length > 0) achs.push({ title: "Created your first budget", value: 1, max: 1 });
         if (savingsGoals.length > 0) achs.push({ title: "Created your first savings goal!", value: 1, max: 1 });
+        
+        // Savings achievements
         const completedGoals = savingsGoals.filter(g => g.initial_amount >= g.target_amount);
         if (completedGoals.length > 0) achs.push({ title: `Completed ${completedGoals.length} savings goal${completedGoals.length > 1 ? 's' : ''}!`, value: completedGoals.length, max: savingsGoals.length });
         if (savingsGoals.some(g => g.initial_amount >= 10000)) achs.push({ title: "Saved Rs 10,000 in a goal!", value: 10000, max: 10000 });
-        achs.push({ title: "Visited the Profile Page", value: 1, max: 1 });
-        achs.push({ title: "Set a financial goal", value: savingsGoals.length > 0 ? 1 : 0, max: 1 });
-        achs.push({ title: "Added two expenses", value: expenses.length >= 2 ? 2 : expenses.length, max: 2 });
-        achs.push({ title: "Created a monthly budget", value: budgets.length > 0 ? 1 : 0, max: 1 });
-        achs.push({ title: "Saved Rs 1,000 in total", value: savingsGoals.reduce((sum, g) => sum + g.initial_amount, 0) >= 1000 ? 1000 : savingsGoals.reduce((sum, g) => sum + g.initial_amount, 0), max: 1000 });
-        achs.push({ title: "Saved Rs 5,000 in total", value: savingsGoals.reduce((sum, g) => sum + g.initial_amount, 0) >= 5000 ? 5000 : savingsGoals.reduce((sum, g) => sum + g.initial_amount, 0), max: 5000 });
-        achs.push({ title: "Saved Rs 20,000 in total", value: savingsGoals.reduce((sum, g) => sum + g.initial_amount, 0) >= 20000 ? 20000 : savingsGoals.reduce((sum, g) => sum + g.initial_amount, 0), max: 20000 });
-        achs.push({ title: "Completed a goal before deadline", value: 0, max: 1 });
-        achs.push({ title: "Logged in for 7 days", value: 0, max: 7 });
-        achs.push({ title: "Logged in for 30 days", value: 0, max: 30 });
-        achs.push({ title: "Added an expense in every category", value: 0, max: 1 });
-        achs.push({ title: "Created 5 savings goals", value: savingsGoals.length >= 5 ? 5 : savingsGoals.length, max: 5 });
-        achs.push({ title: "Completed all savings goals", value: completedGoals.length === savingsGoals.length && savingsGoals.length > 0 ? 1 : 0, max: 1 });
-        // Add 5 more achievements
-        achs.push({ title: "First time using dark mode", value: 0, max: 1 });
-        achs.push({ title: "Exported your data", value: 0, max: 1 });
-        achs.push({ title: "Added a recurring expense", value: 0, max: 1 });
-        achs.push({ title: "Set a budget alert", value: 0, max: 1 });
-        achs.push({ title: "Shared your progress", value: 0, max: 1 });
+        if (savingsGoals.some(g => g.initial_amount >= 50000)) achs.push({ title: "Saved Rs 50,000 in a goal!", value: 50000, max: 50000 });
+        if (savingsGoals.some(g => g.initial_amount >= 100000)) achs.push({ title: "Saved Rs 1,00,000 in a goal!", value: 100000, max: 100000 });
+        if (savingsGoals.some(g => g.initial_amount >= 500000)) achs.push({ title: "Saved Rs 5,00,000 in a goal!", value: 500000, max: 500000 });
+        if (savingsGoals.some(g => g.initial_amount >= 1000000)) achs.push({ title: "Saved Rs 10,00,000 in a goal!", value: 1000000, max: 1000000 });
+        
+        // Budget achievements
+        const totalBudgetAmount = budgets.reduce((sum, b) => sum + b.amount, 0);
+        if (totalBudgetAmount >= 10000) achs.push({ title: "Set a monthly budget of Rs 10,000", value: totalBudgetAmount, max: 10000 });
+        if (totalBudgetAmount >= 50000) achs.push({ title: "Set a monthly budget of Rs 50,000", value: totalBudgetAmount, max: 50000 });
+        if (totalBudgetAmount >= 100000) achs.push({ title: "Set a monthly budget of Rs 1,00,000", value: totalBudgetAmount, max: 100000 });
+        if (budgets.length >= 3) achs.push({ title: "Created 3 different budgets", value: budgets.length, max: 3 });
+        if (budgets.length >= 5) achs.push({ title: "Created 5 different budgets", value: budgets.length, max: 5 });
+        if (budgets.length >= 10) achs.push({ title: "Created 10 different budgets", value: budgets.length, max: 10 });
+        
+        // Expense achievements
+        const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+        if (totalExpenses >= 10000) achs.push({ title: "Tracked Rs 10,000 in expenses", value: totalExpenses, max: 10000 });
+        if (totalExpenses >= 50000) achs.push({ title: "Tracked Rs 50,000 in expenses", value: totalExpenses, max: 50000 });
+        if (totalExpenses >= 100000) achs.push({ title: "Tracked Rs 1,00,000 in expenses", value: totalExpenses, max: 100000 });
+        if (expenses.length >= 10) achs.push({ title: "Tracked 10 expenses", value: expenses.length, max: 10 });
+        if (expenses.length >= 50) achs.push({ title: "Tracked 50 expenses", value: expenses.length, max: 50 });
+        if (expenses.length >= 100) achs.push({ title: "Tracked 100 expenses", value: expenses.length, max: 100 });
+        
+        // Income achievements
+        const incomes = [{ amount: 0 }]; // Replace with real fetch
+        const totalIncome = incomes.reduce((sum, i) => sum + i.amount, 0);
+        if (totalIncome >= 10000) achs.push({ title: "Tracked Rs 10,000 in income", value: totalIncome, max: 10000 });
+        if (totalIncome >= 50000) achs.push({ title: "Tracked Rs 50,000 in income", value: totalIncome, max: 50000 });
+        if (totalIncome >= 100000) achs.push({ title: "Tracked Rs 1,00,000 in income", value: totalIncome, max: 100000 });
+        if (incomes.length >= 5) achs.push({ title: "Tracked 5 income sources", value: incomes.length, max: 5 });
+        if (incomes.length >= 10) achs.push({ title: "Tracked 10 income sources", value: incomes.length, max: 10 });
+        
+        // Financial health achievements
+        const savingsToExpenseRatio = totalExpenses > 0 ? (savingsGoals.reduce((sum, g) => sum + g.initial_amount, 0) / totalExpenses) : 0;
+        if (savingsToExpenseRatio >= 0.5) achs.push({ title: "Saved 50% of your expenses", value: Math.round(savingsToExpenseRatio * 100), max: 50 });
+        if (savingsToExpenseRatio >= 1) achs.push({ title: "Saved more than your expenses", value: Math.round(savingsToExpenseRatio * 100), max: 100 });
+        if (savingsToExpenseRatio >= 2) achs.push({ title: "Saved double your expenses", value: Math.round(savingsToExpenseRatio * 100), max: 200 });
+        
+        // Goal completion achievements
+        if (completedGoals.length === savingsGoals.length && savingsGoals.length > 0) achs.push({ title: "Completed all savings goals", value: 1, max: 1 });
+        if (savingsGoals.length >= 5) achs.push({ title: "Created 5 savings goals", value: savingsGoals.length, max: 5 });
+        if (savingsGoals.length >= 10) achs.push({ title: "Created 10 savings goals", value: savingsGoals.length, max: 10 });
+        
+        // New Category Achievements
+        const categories = ['Food', 'Transport', 'Entertainment', 'Shopping', 'Bills', 'Health', 'Education', 'Travel'];
+        const uniqueCategories = new Set(expenses.map(e => e.category));
+        if (uniqueCategories.size >= 3) achs.push({ title: "Tracked expenses in 3 categories", value: uniqueCategories.size, max: 3 });
+        if (uniqueCategories.size >= 5) achs.push({ title: "Tracked expenses in 5 categories", value: uniqueCategories.size, max: 5 });
+        if (uniqueCategories.size >= 8) achs.push({ title: "Tracked expenses in all categories", value: uniqueCategories.size, max: 8 });
+        
+        // Monthly Consistency Achievements
+        const currentMonth = new Date().getMonth();
+        const currentYear = new Date().getFullYear();
+        const monthlyExpenses = expenses.filter(e => {
+          const expenseDate = new Date(e.date);
+          return expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear;
+        });
+        if (monthlyExpenses.length >= 5) achs.push({ title: "Tracked 5 expenses this month", value: monthlyExpenses.length, max: 5 });
+        if (monthlyExpenses.length >= 10) achs.push({ title: "Tracked 10 expenses this month", value: monthlyExpenses.length, max: 10 });
+        
+        // Budget Management Achievements
+        const underBudget = budgets.filter(b => {
+          const categoryExpenses = expenses.filter(e => e.category === b.category);
+          const totalCategoryExpense = categoryExpenses.reduce((sum, e) => sum + e.amount, 0);
+          return totalCategoryExpense <= b.amount;
+        });
+        if (underBudget.length >= 3) achs.push({ title: "Stayed under budget in 3 categories", value: underBudget.length, max: 3 });
+        if (underBudget.length >= 5) achs.push({ title: "Stayed under budget in 5 categories", value: underBudget.length, max: 5 });
+        
         setAchievements(achs);
       } catch (e) {
         setAchievements([]);
@@ -292,8 +355,8 @@ export default function SettingsView() {
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6 h-[calc(100vh-100px)] overflow-hidden bg-[#f9f9f9] dark:bg-[#131313] flex flex-col items-center w-full">
-      <div className="w-full mx-auto overflow-y-auto">
+    <div className="space-y-6 p-4 md:p-6 h-[calc(100vh-100px)] bg-[#f9f9f9] dark:bg-[#131313] flex flex-col items-center w-full">
+      <div className="w-full mx-auto">
         {/* Profile/Settings Section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8 md:gap-0 mb-8 w-full">
           {/* Left: Avatar, Name, Email */}
@@ -319,7 +382,7 @@ export default function SettingsView() {
             </Button>
             <AlertDialog open={showLogout} onOpenChange={setShowLogout}>
               <AlertDialogTrigger asChild>
-                <Button variant="outline" className="rounded-xl p-0 h-12 w-[140px] flex items-center justify-center border-red-300 dark:border-destructive/80 text-red-500 hover:bg-destructive/90 hover:text-destructive-foreground dark:hover:bg-destructive/80 gap-2" onClick={() => setShowLogout(true)}>
+                <Button variant="outline" className="bg-destructive/20 rounded-xl p-0 h-12 w-[140px] flex items-center justify-center border-red-300 dark:border-destructive/80 text-red-500 hover:bg-destructive/90 hover:text-destructive-foreground dark:hover:bg-destructive/80 gap-2" onClick={() => setShowLogout(true)}>
                   <LogOut className="h-6 w-6" />
                   <span className="text-lg font-semibold">Logout</span>
                 </Button>

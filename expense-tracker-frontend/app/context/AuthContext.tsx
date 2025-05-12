@@ -46,6 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const token = Cookies.get("token");
         if (!token) {
           setLoading(false);
+          router.push('/login');
           return;
         }
 
@@ -58,14 +59,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             fullname: response.user.fullname || ''
           };
           setUser(userData);
+          // If we're on the login page, redirect to dashboard
+          if (window.location.pathname === '/login') {
+            router.push('/dashboard');
+          }
         } else {
+          // Clear invalid token
           Cookies.remove('token');
           setUser(null);
+          router.push('/login');
         }
       } catch (error) {
         console.error('Auth check error:', error);
         Cookies.remove('token');
         setUser(null);
+        router.push('/login');
       } finally {
         setLoading(false);
       }
@@ -134,6 +142,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await authAPI.login(email, password);
       
       if (response.status === 'otp_required') {
+        // Store email in cookie for OTP verification
+        Cookies.set('tempEmail', email, { expires: 1 }); // Expires in 1 day
         toast({
           title: "Verification Required",
           description: "Please verify your login with OTP",
@@ -141,6 +151,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         router.push(`/verify-login?email=${encodeURIComponent(email)}`);
       } else if (response.status === 'success' && response.token) {
+        // Set token and user data in cookies
         Cookies.set('token', response.token, COOKIE_OPTIONS);
         const userData: User = {
           id: response.user.id,
@@ -170,7 +181,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await authAPI.verifyLoginOTP(otp, email);
       
       if (response.status === 'success' && response.token && response.user) {
-        Cookies.remove('tempToken');
+        // Set token and user data in cookies
         Cookies.set('token', response.token, COOKIE_OPTIONS);
         const userData: User = {
           id: response.user.id,
@@ -185,8 +196,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           variant: "success",
         });
 
-        // Wait for state to update before navigation
-        await new Promise(resolve => setTimeout(resolve, 500));
         router.replace('/dashboard');
       } else {
         toast({
@@ -233,7 +242,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (response.status === 'success' && response.token && response.user) {
         console.log('OTP verification successful');
-        Cookies.remove('tempToken');
+        // Cookies.remove('tempToken');
         Cookies.set('token', response.token, COOKIE_OPTIONS);
         console.log('Token stored in Cookies');
 
@@ -318,7 +327,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await authAPI.verifyOTP(otp, email);
       
       if (response.status === 'success' && response.token && response.user) {
-        Cookies.remove('tempToken');
+        // Cookies.remove('tempToken');
         Cookies.set('token', response.token, COOKIE_OPTIONS);
         const userData: User = {
           id: response.user.id || '',

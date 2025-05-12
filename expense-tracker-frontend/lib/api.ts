@@ -31,7 +31,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401 || error.response?.status === 403) {
       const url = error.config?.url || '';
       if (!url.includes('/users/login') && !url.includes('/users/verify-otp')) {
-        Cookies.remove('token');
+        // Cookies.remove('token');
         window.location.href = '/login';
       }
     }
@@ -282,7 +282,7 @@ export const authAPI = {
         const data = error.response.data;
 
         if (status === 401 || status === 403) {
-          Cookies.remove('token');
+          // Cookies.remove('token');
         }
 
         return {
@@ -303,7 +303,7 @@ export const authAPI = {
   },
 
   logout: () => {
-    Cookies.remove('token');
+    // Cookies.remove('token');
   },
 
   sendPasswordResetEmail: async (email: string) => {
