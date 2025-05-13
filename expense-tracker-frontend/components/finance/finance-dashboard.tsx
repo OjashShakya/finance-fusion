@@ -28,16 +28,16 @@ export function FinanceDashboard() {
   const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>([]);
   const [savingsTransactions, setSavingsTransactions] = useState<SavingsTransaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
-    if (user && !authLoading) {
+    if (user) {
       fetchExpenses();
       fetchIncomes();
       fetchSavingsGoals();
       fetchBudgets();
     }
-  }, [user, authLoading]);
+  }, [user]);
 
   const fetchExpenses = async () => {
     try {
@@ -480,19 +480,12 @@ export function FinanceDashboard() {
     }
   };
 
-  if (authLoading || isLoading) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#f9f9f9] dark:bg-[#131313]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#27ae60]"></div>
-          <p className="text-gray-500 dark:text-gray-400">Loading your dashboard...</p>
-        </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
-  }
-
-  if (!user) {
-    return null; // AuthContext will handle redirect
   }
 
   return (

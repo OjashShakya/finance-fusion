@@ -1,6 +1,7 @@
 import { Expense } from "@/types/finance";
 import Cookies from "js-cookie";
 
+// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://finance-fusion-api.vercel.app/api' || 'https://localhost:5000/api';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 // Helper function to get headers with auth token

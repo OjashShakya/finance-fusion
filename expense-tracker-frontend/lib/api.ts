@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import Cookies from 'js-cookie';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://finance-fusion-api.vercel.app/api' || 'https://localhost:5000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://finance-fusion-api.vercel.app/api';
 // const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:5000/api';
 
 const api = axios.create({
@@ -353,21 +353,35 @@ export const profileAPI = {
 
   uploadProfilePicture: async (userId: string, file: File | null) => {
     try {
-      const formData = new FormData();
-      if (file) {
-        formData.append('profilePicture', file);
+      if (!file) {
+        throw new Error('No file provided');
       }
 
-      const response = await api.post(`/profile/upload-picture/${userId}`, formData, {
+      const formData = new FormData();
+      formData.append('profilePicture', file); // Changed back to profilePicture to match backend
+
+      // Create a new axios instance for this request to avoid header conflicts
+      const uploadApi = axios.create({
+        baseURL: API_URL,
+        withCredentials: true,
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Authorization': `Bearer ${Cookies.get('token')}`,
+          'Accept': 'application/json',
+        },
       });
+
+      const response = await uploadApi.post(`/profile/upload-picture/${userId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
       return {
         success: true,
         data: response.data
       };
     } catch (error: any) {
+      console.error('Profile picture upload error:', error.response?.data || error);
       return {
         success: false,
         message: error.response?.data?.message || 'Failed to upload profile picture'

@@ -43,10 +43,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        // Clear any existing tokens and cookies on page load
+        if (window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_RELOAD) {
+          // Cookies.remove('token');
+          // Cookies.remove('user');
+          setUser(null);
+          router.push('/login');
+          return;
+        }
+
         const token = Cookies.get("token");
         if (!token) {
           setLoading(false);
-          router.push('/login');
           return;
         }
 
@@ -59,21 +67,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             fullname: response.user.fullname || ''
           };
           setUser(userData);
-          // If we're on the login page, redirect to dashboard
-          if (window.location.pathname === '/login') {
-            router.push('/dashboard');
-          }
         } else {
-          // Clear invalid token
-          Cookies.remove('token');
+          // Cookies.remove('token');
+          // Cookies.remove('user');
           setUser(null);
-          router.push('/login');
         }
       } catch (error) {
         console.error('Auth check error:', error);
-        Cookies.remove('token');
+        // Cookies.remove('token');
+        // Cookies.remove('user');
         setUser(null);
-        router.push('/login');
       } finally {
         setLoading(false);
       }
@@ -142,8 +145,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await authAPI.login(email, password);
       
       if (response.status === 'otp_required') {
-        // Store email in cookie for OTP verification
-        Cookies.set('tempEmail', email, { expires: 1 }); // Expires in 1 day
         toast({
           title: "Verification Required",
           description: "Please verify your login with OTP",
@@ -151,7 +152,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         router.push(`/verify-login?email=${encodeURIComponent(email)}`);
       } else if (response.status === 'success' && response.token) {
-        // Set token and user data in cookies
         Cookies.set('token', response.token, COOKIE_OPTIONS);
         const userData: User = {
           id: response.user.id,
@@ -181,7 +181,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await authAPI.verifyLoginOTP(otp, email);
       
       if (response.status === 'success' && response.token && response.user) {
-        // Set token and user data in cookies
+        // Cookies.remove('tempToken');
         Cookies.set('token', response.token, COOKIE_OPTIONS);
         const userData: User = {
           id: response.user.id,
@@ -196,6 +196,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           variant: "success",
         });
 
+        // Wait for state to update before navigation
+        await new Promise(resolve => setTimeout(resolve, 500));
         router.replace('/dashboard');
       } else {
         toast({
@@ -217,7 +219,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await authAPI.logout();
       setUser(null);
-      Cookies.remove('token');
+      // Cookies.remove('token');
       toast({
         title: "Logged Out",
         description: "You have been successfully logged out.",
