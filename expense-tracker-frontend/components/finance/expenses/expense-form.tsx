@@ -132,15 +132,9 @@ export function ExpenseForm({ onSubmit }: { onSubmit: (data: any) => void }) {
 
   return (
     <Card className="bg-white dark:bg-[#131313] border-[#e2e8f0] dark:border-[#4e4e4e]">
-      <CardHeader>
-        <CardTitle className="text-gray-900 dark:text-white">Add New Expense</CardTitle>
-        <CardDescription className="text-gray-500 dark:text-[#4e4e4e]">
-          Record your expense details
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+      <CardContent className="p-4">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-3">
             <FormField
               control={form.control}
               name="category"
