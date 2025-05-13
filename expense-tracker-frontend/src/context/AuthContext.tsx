@@ -44,7 +44,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (response.data.status === "success") {
+      console.log("response::", response)
+      if (response.data.success) {
         setUser(response.data.user);
         // Store the updated user data in cookies
         Cookies.set("user", JSON.stringify(response.data.user), {
@@ -68,6 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         
         if (token) {
           const isValid = await validateToken(token);
+          console.log("isValid::", isValid)
           if (isValid) {
             axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
             router.push("/dashboard");
