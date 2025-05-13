@@ -186,7 +186,7 @@ export function BudgetList({ budgets, expenses, onDelete }: BudgetListProps) {
                               : "!bg-[#27ae60]"
                       }`}
                     />
-                    <p className="text-xs text-muted-foreground">${remaining.toFixed(2)} remaining</p>
+                    <p className="text-xs text-muted-foreground">Rs. {remaining.toFixed(2)} remaining</p>
                   </div>
                 </CardContent>
               </Card>

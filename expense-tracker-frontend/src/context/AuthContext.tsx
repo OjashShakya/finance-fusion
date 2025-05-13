@@ -73,8 +73,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             router.push("/dashboard");
           } else {
             // Clear invalid token and user data
-            Cookies.remove("token");
-            Cookies.remove("user");
+            // Cookies.remove("token");
+            // Cookies.remove("user");
             delete axios.defaults.headers.common["Authorization"];
             setUser(null);
             router.push("/login");
@@ -84,8 +84,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       } catch (error) {
         console.error("Error initializing auth:", error);
-        Cookies.remove("token");
-        Cookies.remove("user");
+        // Cookies.remove("token");
+        // Cookies.remove("user");
         delete axios.defaults.headers.common["Authorization"];
         setUser(null);
         if (window.location.pathname !== '/login') {
@@ -203,12 +203,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         Cookies.set("user", JSON.stringify(user));
         setOtpStep(false);
         setOtpType("");
-        Cookies.remove("otpEmail");
+        // Cookies.remove("otpEmail");
         router.push("/dashboard");
         return { success: true, message: "Login successful" };
       } else {
         console.log("Sign UP ")
-        Cookies.remove("otpEmail");
+        // Cookies.remove("otpEmail");
         setOtpStep(false);
         setOtpType("");
         router.push("/dashboard");
@@ -222,8 +222,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    Cookies.remove("token");
-    Cookies.remove("user");
+    // Cookies.remove("token");
+    // Cookies.remove("user");
     delete axios.defaults.headers.common["Authorization"];
     setUser(null);
     router.push("/login");

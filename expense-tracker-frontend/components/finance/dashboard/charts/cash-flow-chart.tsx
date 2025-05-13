@@ -51,12 +51,12 @@ export function CashFlowChart({ data }: CashFlowChartProps) {
               fontSize={12}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value) => `$${value}`}
+              tickFormatter={(value) => `Rs. ${value}`}
             />
             <Tooltip
               formatter={(value: any) => {
-                if (value === undefined || value === null) return ["$0.00", ""]
-                return [`$${Number(value).toFixed(2)}`, ""]
+                if (value === undefined || value === null) return ["Rs. 0.00", ""]
+                return [`Rs. ${Number(value).toFixed(2)}`, ""]
               }}
               contentStyle={{
                 backgroundColor: "hsl(var(--card))",
