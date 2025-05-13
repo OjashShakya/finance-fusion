@@ -16,8 +16,7 @@ router.patch(
     updateUsername
 );
 
-
-// Update password endpoint (change from POST to PATCH or PUT)
+// Update password endpoint
 router.patch(
     "/update-password/:id",
     authenticateUser,

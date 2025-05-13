@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 const incomeFormSchema = z.object({
   description: z.string().min(1, "Description is required").max(100, "Description must be less than 100 characters"),
@@ -95,127 +96,141 @@ export function IncomeForm({ onSubmit }: { onSubmit: (data: Omit<Income, "id">) 
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-base">Source</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="Add a description" 
-                  {...field} 
-                  maxLength={100}
-                  className="h-12 rounded-xl border-gray-200 bg-white dark:border-gray-800 dark:bg-[#1c1c1c]"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <Card className="bg-white dark:bg-[#131313] border-[#e2e8f0] dark:border-[#4e4e4e]">
+      <CardHeader>
+        <CardTitle className="text-gray-900 dark:text-white">Add New Income</CardTitle>
+        <CardDescription className="text-gray-500 dark:text-[#4e4e4e]">
+          Record your income source and amount
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-900 dark:text-white">Category</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="h-12 rounded-xl border-gray-200 bg-white dark:border-gray-800 dark:bg-[#1c1c1c]">
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="dark:bg-[#1c1c1c]">
+                      {Object.values(IncomeCategory).map((category) => (
+                        <SelectItem 
+                          key={category} 
+                          value={category}
+                          className="dark:focus:bg-gray-800"
+                        >
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-base">Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger className="h-12 rounded-xl border-gray-200 bg-white dark:border-gray-800 dark:bg-[#1c1c1c]">
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent className="dark:bg-[#1c1c1c]">
-                  {Object.values(IncomeCategory).map((category) => (
-                    <SelectItem 
-                      key={category} 
-                      value={category}
-                      className="dark:focus:bg-gray-800"
-                    >
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="amount"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-base">Amount</FormLabel>
-              <FormControl>
-                <Input 
-                  type="number" 
-                  placeholder="0" 
-                  min="0.01"
-                  step="0.01"
-                  {...field} 
-                  className="h-12 rounded-xl border-gray-200 bg-white dark:border-gray-800 dark:bg-[#1c1c1c]"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="date"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-base">Date</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-900 dark:text-white">Source</FormLabel>
                   <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "h-12 w-full rounded-xl border-gray-200 bg-white pl-3 text-left font-normal dark:border-gray-800 dark:bg-[#1c1c1c]",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
+                    <Input 
+                      placeholder="Add a description" 
+                      {...field} 
+                      maxLength={100}
+                      className="h-12 rounded-xl border-gray-200 bg-white dark:border-gray-800 dark:bg-[#1c1c1c]"
+                    />
                   </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 dark:bg-[#1c1c1c]" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <Button 
-          type="submit" 
-          className="w-full h-12 rounded-xl bg-[#27ae60] hover:bg-[#2ecc71] dark:bg-[#27ae60] dark:hover:bg-[#2ecc71]"
-        >
-          Add Income
-        </Button>
-      </form>
-    </Form>
+            <FormField
+              control={form.control}
+              name="amount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-900 dark:text-white">Amount</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      placeholder="0" 
+                      min="0.01"
+                      step="0.01"
+                      {...field} 
+                      className="h-12 rounded-xl border-gray-200 bg-white dark:border-gray-800 dark:bg-[#1c1c1c]"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-900 dark:text-white">Date</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "h-12 w-full rounded-xl border-gray-200 bg-white pl-3 text-left font-normal dark:border-gray-800 dark:bg-[#1c1c1c]",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                        fromYear={2020}
+                        toYear={2030}
+                        captionLayout="dropdown"
+                        className="rounded-md border shadow"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button 
+              type="submit" 
+              className="w-full h-12 rounded-xl bg-[#27ae60] hover:bg-[#2ecc71] dark:bg-[#27ae60] dark:hover:bg-[#2ecc71]"
+            >
+              Add Income
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   )
 }
 

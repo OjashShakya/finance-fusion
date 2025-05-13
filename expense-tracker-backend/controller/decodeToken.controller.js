@@ -1,8 +1,9 @@
 const { StatusCodes } = require("http-status-codes");
 const User = require("../models/user.model");
+
 const currentUser = async (req, res) => {
   try {
-    const userId = req.user.id; // This comes from the auth middleware
+    const userId = req.userId; // This comes from the auth middleware
     const user = await User.findById(userId).select('-password -otp');
 
     if (!user) {
@@ -30,5 +31,6 @@ const currentUser = async (req, res) => {
   }
 };
 
-
-module.exports = { currentUser };
+module.exports = {
+  currentUser
+};

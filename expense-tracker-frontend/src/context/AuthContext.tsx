@@ -73,8 +73,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             router.push("/dashboard");
           } else {
             // Clear invalid token and user data
-            // Cookies.remove("token");
-            // Cookies.remove("user");
+            Cookies.remove("token");
+            Cookies.remove("user");
             delete axios.defaults.headers.common["Authorization"];
             setUser(null);
             router.push("/login");

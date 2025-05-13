@@ -358,19 +358,9 @@ export const profileAPI = {
       }
 
       const formData = new FormData();
-      formData.append('profilePicture', file); // Changed back to profilePicture to match backend
+      formData.append('profilePicture', file);
 
-      // Create a new axios instance for this request to avoid header conflicts
-      const uploadApi = axios.create({
-        baseURL: API_URL,
-        withCredentials: true,
-        headers: {
-          'Authorization': `Bearer ${Cookies.get('token')}`,
-          'Accept': 'application/json',
-        },
-      });
-
-      const response = await uploadApi.post(`/profile/upload-picture/${userId}`, formData, {
+      const response = await api.post(`/profile/upload-picture/${userId}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

@@ -12,6 +12,7 @@ const {
 const { validate } = require("../middlewares/validation.middleware");
 const { signupSchema } = require("../validations/ZodValidation.user");
 const authenticateUser = require("../middlewares/auth.middleware");
+const { currentUser } = require("../controller/decodeToken.controller");
 
 const router = express.Router();
 
@@ -36,13 +37,18 @@ router.post(
   verifyLoginOTP
 );
 
-
 router.get(
   "/",
   authenticateUser,
   getAllUser
 );
 
+// Get current user endpoint
+router.get(
+  "/me",
+  authenticateUser,
+  currentUser
+);
 
 router.post(
   "/password-reset/request",

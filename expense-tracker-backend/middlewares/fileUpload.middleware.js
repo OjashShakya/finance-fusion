@@ -2,8 +2,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Ensure uploads directory exists
-const uploadDir = './uploads';
+// Ensure uploads directory exists with absolute path
+const uploadDir = path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -72,6 +72,18 @@ const uploadMiddleware = (req, res, next) => {
         message: err.message
       });
     }
+
+    // Check if file was uploaded
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'No file uploaded'
+      });
+    }
+
+    // Add the file path to the request body for the controller to use
+    req.body.profilePicture = req.file.path;
+    
     // Everything went fine
     next();
   });
