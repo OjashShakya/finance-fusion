@@ -7,6 +7,8 @@ import { useToast } from '@/hooks/use-toast';
 
 import  Cookies from 'js-cookie'
 
+//NEXT_PUBLIC_API_URL = http://localhost:5000/api
+//NEXT_PUBLIC_API_URL = https://finance-fusion-api.vercel.app/api
 // Add cookie options for better security
 const COOKIE_OPTIONS = {
   secure: process.env.NODE_ENV === 'production',
