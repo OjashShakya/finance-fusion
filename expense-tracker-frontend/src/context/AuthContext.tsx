@@ -105,7 +105,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setError(null);
       const response = await axios.post(
-        "http://localhost:5000/api/users/register",
+        "https://finance-fusion-api.vercel.app/api/users/register",
         { fullname, email, password }
       );
 
@@ -134,7 +134,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setError(null);
       const response = await axios.post(
-        "http://localhost:5000/api/users/login",
+        "https://finance-fusion-api.vercel.app/api/users/login",
         credentials
       );
 
@@ -183,7 +183,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log("Endpoint::", endpoint)
 
       const response = await axios.post(
-        `http://localhost:5000/api/users/${endpoint}`,
+        `https://finance-fusion-api.vercel.app/api/users/${endpoint}`,
         { email, otp }
       );
 
@@ -235,7 +235,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setError(null);
       const response = await axios.post(
-        "http://localhost:5000/api/users/password-reset/request",
+        "https://finance-fusion-api.vercel.app/api/users/password-reset/request",
         { email }
       );
 
@@ -256,7 +256,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setError(null);
       const response = await axios.post(
-        "http://localhost:5000/api/users/verify-otp",
+        "https://finance-fusion-api.vercel.app/api/users/verify-otp",
         { email, otp }
       );
 
@@ -281,7 +281,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setError(null);
       const response = await axios.post(
-        "http://localhost:5000/api/users/password-reset/reset",
+        "https://finance-fusion-api.vercel.app/api/users/password-reset/reset",
         { newPassword, email }
       );
 
