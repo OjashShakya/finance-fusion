@@ -224,10 +224,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    // Cookies.remove("token");
-    // Cookies.remove("user");
+    Cookies.remove("token");
+    Cookies.remove("user");
     delete axios.defaults.headers.common["Authorization"];
     setUser(null);
+    toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out.",
+        variant: "success",
+      });
     router.push("/login");
   };
 
