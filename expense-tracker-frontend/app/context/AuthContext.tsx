@@ -222,7 +222,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await authAPI.logout();
       setUser(null);
-      // Cookies.remove('token');
+      Cookies.remove('token');
       toast({
         title: "Logged Out",
         description: "You have been successfully logged out.",
