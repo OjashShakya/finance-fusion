@@ -224,16 +224,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       Cookies.remove('token');
       toast({
-        title: "Logged Out",
+        title: "Logged Out Successfully",
         description: "You have been successfully logged out.",
         variant: "success",
+        duration: 2000,
       });
-      router.push('/login');
+      // Add a small delay to show the toast before redirecting
+      setTimeout(() => {
+        router.push('/login');
+      }, 1500);
     } catch (error: any) {
       toast({
         title: "Logout Failed",
         description: error.response?.data?.message || "Something went wrong. Please try again.",
         variant: "destructive",
+        duration: 3000,
       });
       throw error;
     }

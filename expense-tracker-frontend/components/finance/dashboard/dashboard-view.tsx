@@ -199,7 +199,7 @@ export function DashboardView({
               </Button>
             </div>
             <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
-              Rs. {showTotalIncome ? totalIncome : availableIncome}
+              Rs. {showTotalIncome ? totalIncome.toFixed(2) : availableIncome.toFixed(2)}
             </p>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               {showTotalIncome ? "Total earnings" : `${incomes.length} income sources`}
@@ -284,7 +284,7 @@ export function DashboardView({
               "mt-2 text-3xl font-bold",
               netIncome >= 0 ? "text-[#10B981]" : "text-red-500"
             )}>
-              Rs. {Math.abs(netIncome)}
+              Rs. {Math.abs(netIncome).toFixed(2)}
             </p>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               {netIncome >= 0 ? "Positive cash flow" : "Negative cash flow"}
@@ -325,14 +325,14 @@ export function DashboardView({
             </div>
             {showTotalSavings ? (
               <>
-                <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">Rs. {totalSavings}</p>
+                <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">Rs. {totalSavings.toFixed(2)}</p>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                   {savingsGoals.length} savings goals
                 </p>
               </>
             ) : (
               <>
-                <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{savingsRate.toFixed(1)}%</p>
+                <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{savingsRate.toFixed(2)}%</p>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                   {savingsRate >= 20 ? "Excellent saving habits" : 
                    savingsRate >= 10 ? "Good saving habits" :

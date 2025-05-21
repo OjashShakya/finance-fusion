@@ -8,10 +8,12 @@ import OTP_icon from "../../../assets/otp.png";
 import NewPassword_icon from "../assets/Newpassword.png";
 import { useAuth } from '../../src/context/AuthContext';
 import { Eye, EyeOff } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const NewPasswordContent: React.FC = () => {
   const router = useRouter();
   const { resetPassword } = useAuth();
+  const { toast } = useToast();
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
@@ -22,18 +24,14 @@ const NewPasswordContent: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const validatePassword = (password: string) => {
-    const minLength = 5;
-    const maxLength = 15;
+    const minLength = 6;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
     const hasNumber = /\d/.test(password);
-    const hasSpecialChar = /[\W_]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
     
     if (password.length < minLength) {
-      return "Password must be at least 5 characters long";
-    }
-    if (password.length > maxLength) {
-      return "Password must be less than 15 characters";
+      return "Password must be at least 6 characters long";
     }
     if (!hasUpperCase) {
       return "Password must contain at least one uppercase letter";
@@ -71,7 +69,14 @@ const NewPasswordContent: React.FC = () => {
     try {
       const result = await resetPassword(password, email);
       if (result.success) {
-        router.push("/login");
+        toast({
+          title: "Password Reset Successful",
+          description: "Your password has been reset successfully. Please login with your new password.",
+          variant: "success",
+        });
+        setTimeout(() => {
+          router.push("/login");
+        }, 1500);
       } else {
         setError(result.message || "Failed to reset password. Please try again.");
       }

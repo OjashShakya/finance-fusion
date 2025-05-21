@@ -42,7 +42,7 @@ export function ExpenseDistributionChart({ data }: ExpenseDistributionChartProps
               ))}
             </Pie>
             <Tooltip
-              formatter={(value: number) => [`$${value.toFixed(2)}`, "Amount"]}
+              formatter={(value: number) => [`Rs. ${value.toFixed(2)}`, "Amount"]}
               contentStyle={{
                 backgroundColor: "hsl(var(--card))",
                 borderColor: "hsl(var(--border))",
